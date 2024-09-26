@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: guerinApp
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: guerinApp
+  template:
+    metadata:
+      labels:
+        app: guerinApp
+    spec:
+      containers:
+      - name: guerinApp
+        image: fekam/guerinApp:latest
+        ports:
+        - containerPort: 8080
