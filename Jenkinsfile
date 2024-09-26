@@ -4,12 +4,12 @@ pipeline {
     stages {
         stage('Cloner le dépôt') {
             steps {
-                git 'https://github.com/fekam/guerin-devops.git'
+                 git branch: 'main', url: 'https://github.com/fekam/guerin-devops.git'
             }
         }
         stage('Construire l\'image Docker') {
             steps {
-                sh 'docker build -t mon-utilisateur/my-web-app .'
+                sh 'docker build -t mon-utilisateur/my-web-app .'   
             }
         }
         stage('Pousser l\'image Docker') {
