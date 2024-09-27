@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: guerinApp
+  name: guerinapp
 spec:
   type: NodePort
   selector:
-    app: guerinApp
+    app: guerinapp
   ports:
     - protocol: TCP
       port: 8080

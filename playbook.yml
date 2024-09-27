@@ -1,11 +1,11 @@
 ---
 - name: Déploiement de l'application sur Kubernetes
-  hosts: localhost
+  hosts: all
   tasks:
     - name: Construire et pousser l'image Docker
       shell: |
-        docker build -t fekam/guerinApp .
-        docker push fekam/guerinApp
+        docker build -t fekam/guerinapp .
+        docker push fekam/guerinapp
 
     - name: Créer un déploiement Kubernetes
       shell: kubectl apply -f deployment.yml
