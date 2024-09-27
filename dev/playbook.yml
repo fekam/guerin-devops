@@ -1,6 +1,7 @@
 ---
 - name: Déploiement de l'application sur Kubernetes
   hosts: all
+  become: yes 
   tasks:
     - name: Construire et pousser l'image Docker
       shell: |
