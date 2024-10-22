@@ -1,7 +1,7 @@
-  hosts: master
+- hosts: master
   become: yes
   tasks:
-    - name: Create an Empty file for Kubeadm configuring
+    - name: Create an empty file for Kubeadm configuration
       copy:
         content: ""
         dest: /etc/kubernetes/kubeadm-config.yaml
@@ -27,7 +27,7 @@
             cpu: 100m
             memory: 50M
           enforceNodeAllocatable:
-          - pods
+            - pods
 
     - name: Initialize the cluster
       shell: kubeadm init --config /etc/kubernetes/kubeadm-config.yaml >> cluster_initialized.log
@@ -35,25 +35,24 @@
         chdir: /home/ubuntu
         creates: cluster_initialized.log
 
-    - name: Create .kube directory
-      become: yes
+    - name: Create .kube directory for Ubuntu user
       become_user: ubuntu
       file:
-        path: $HOME/.kube
+        path: /home/ubuntu/.kube
         state: directory
-        mode: 0755
+        mode: '0755'
 
-    - name: Copy admin.conf to User's kube config
+    - name: Copy admin.conf to user's kube config
       copy:
         src: /etc/kubernetes/admin.conf
         dest: /home/ubuntu/.kube/config
         remote_src: yes
         owner: ubuntu
+        mode: '0644'
 
-    - name: Install Pod Network
-      become: yes
+    - name: Install Pod network (Flannel)
       become_user: ubuntu
       shell: kubectl apply -f https://raw.githubusercontent.com/flannel-io/flannel/master/Documentation/kube-flannel.yml >> pod_network_setup.log
       args:
-        chdir: $HOME
+        chdir: /home/ubuntu
         creates: pod_network_setup.log
