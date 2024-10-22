@@ -13,7 +13,7 @@ pipeline {
         stage('Déployer avec Ansible') {
             steps {
                 sh '''
-                    cd Kubernetes-Cluster && ansible-playbook -i inventory playbook.yml
+                    cd Kubernetes-Cluster && ansible-playbook -i inventory 01-preparations.yaml
                 '''
             }
         }
