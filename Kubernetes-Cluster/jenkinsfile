@@ -1,0 +1,21 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Cloner le dépôt') {
+            steps {
+                sh '''
+                    git clone -b main https://github.com/fekam/guerin-devops.git
+                '''
+            }
+        }
+
+        stage('Déployer avec Ansible') {
+            steps {
+                sh '''
+                    cd Kubernetes-Cluster && ansible-playbook -i inventory playbook.yml
+                '''
+            }
+        }
+    }
+}
