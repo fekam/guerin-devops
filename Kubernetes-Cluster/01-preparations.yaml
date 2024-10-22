@@ -111,7 +111,7 @@
 
     - name: add Kubernetes' APT repository
       apt_repository:
-        repo: deb https://apt.kubernetes.io/ kubernetes-xenial main
+        repo: deb https://apt.kubernetes.io/ kubernetes-$(lsb_release -cs) main
         state: present
         filename: 'kubernetes'
 
