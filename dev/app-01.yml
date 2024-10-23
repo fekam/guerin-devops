@@ -1,5 +1,5 @@
 - name: Application Deployment
-  hosts: proxy_servers
+  hosts: master
   tasks:
     - name: Create a Deployment
       kubernetes.core.k8s:
