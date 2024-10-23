@@ -1,5 +1,5 @@
 - name: Create K8S resource
-  hosts: proxy-servers
+  hosts: master
   tasks:
   - name: Get K8S namespace
     kubernetes.core.k8s:
