@@ -1,0 +1,21 @@
+---
+- name: Deploy application to Kubernetes
+  hosts: master
+  become: yes
+  tasks:
+    
+    - name: Copy manifest to master node
+      copy:
+        src: ./app-deployment.yaml
+        dest: /home/ubuntu/app-deployment.yaml
+        mode: '0644'
+
+    - name: Apply Kubernetes manifest using kubectl
+      shell: kubectl apply -f /home/ubuntu/app-deployment.yaml
+      args:
+        chdir: /home/ubuntu
+      register: apply_output
+
+    - name: Show kubectl apply output
+      debug:
+        msg: "{{ apply_output.stdout }}"

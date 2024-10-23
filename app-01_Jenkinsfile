@@ -28,7 +28,7 @@ pipeline {
         stage('Déployer avec Ansible') {
             steps {
                 sh '''
-                    cd guerin-devops/dev && ansible-playbook -i inventory app-01.yml
+                    cd guerin-devops/dev && ansible-playbook -i inventory depoy-app.yml
                 '''
             }
         }
