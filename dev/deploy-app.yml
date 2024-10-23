@@ -6,12 +6,12 @@
     
     - name: Copy manifest to master node
       copy:
-        src: ./app-deployment.yaml
-        dest: /home/ubuntu/app-deployment.yaml
+        src: ./app-01.yaml
+        dest: /home/ubuntu/app-01.yaml
         mode: '0644'
 
     - name: Apply Kubernetes manifest using kubectl
-      shell: kubectl apply -f /home/ubuntu/app-deployment.yaml
+      shell: kubectl apply -f /home/ubuntu/app-01.yaml
       args:
         chdir: /home/ubuntu
       register: apply_output
