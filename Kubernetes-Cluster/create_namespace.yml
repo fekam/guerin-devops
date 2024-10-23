@@ -1,5 +1,6 @@
 - name: Create K8S resource
   hosts: master
+  
   tasks:
   - name: Get K8S namespace
     kubernetes.core.k8s:
