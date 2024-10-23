@@ -1,0 +1,36 @@
+pipeline {
+    agent any
+
+    stages {
+        stage('Cloner le dépôt ou mettre à jour') {
+            steps {
+                sh '''
+                    # Check if the guerin-devops directory exists
+                    if [ -d "guerin-devops" ]; then
+                        timestamp=$(date +%Y%m%d%H%M%S)
+                        # Create a backup of the current folder
+                        mv guerin-devops guerin-devops-backup-$timestamp
+
+                        # Check the number of backup folders and limit to 2
+                        backup_count=$(ls -dt guerin-devops-backup-* | wc -l)
+                        if [ $backup_count -gt 2 ]; then
+                            # Delete the oldest backup folder(s) if more than 2 exist
+                            ls -dt guerin-devops-backup-* | tail -n +3 | xargs rm -rf
+                        fi
+                    fi
+                    
+                    # Clone the repository after backup
+                    git clone -b main https://github.com/fekam/guerin-devops.git
+                '''
+            }
+        }
+
+        stage('Déployer avec Ansible') {
+            steps {
+                sh '''
+                    cd guerin-devops/dev && ansible-playbook -i /var/lib/jenkins/workspace/create namespace/Kubernetes-Cluster/inventory app-01.yml
+                '''
+            }
+        }
+    }
+}
