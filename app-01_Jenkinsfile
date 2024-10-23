@@ -28,7 +28,7 @@ pipeline {
         stage('Déployer avec Ansible') {
             steps {
                 sh '''
-                    cd guerin-devops/dev && ansible-playbook -i /var/lib/jenkins/workspace/create namespace/Kubernetes-Cluster/inventory app-01.yml
+                    cd guerin-devops/dev && ansible-playbook -i inventory app-01.yml
                 '''
             }
         }
