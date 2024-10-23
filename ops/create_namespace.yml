@@ -1,0 +1,4 @@
+- name: Create a Namespace from K8S YAML File
+  kubernetes.core.k8s:
+    state: present
+    src: Kubernetes-Cluster/create_namespace.yml
