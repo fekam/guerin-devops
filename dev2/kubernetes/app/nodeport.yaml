@@ -5,9 +5,10 @@ metadata:
 spec:
   type: NodePort
   selector:
-    app: app2-deployment
+    app: app2  # Ensure this matches the label on your Pods
   ports:
   - name: web-service
     port: 8090
     protocol: TCP
     targetPort: 8090
+    nodePort: 30080  # Optional: specify a NodePort within 30000-32767

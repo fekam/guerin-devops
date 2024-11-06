@@ -5,10 +5,10 @@ metadata:
 spec:
   type: NodePort
   selector:
-    app: guerindb-deployment
+    app: guerindb  # This should match the label in your Deployment
   ports:
   - name: database
     port: 3306
-    hostPort: 8090
-    protocol: TCP
     targetPort: 3306
+    protocol: TCP
+    nodePort: 30990  # Optional: specify a port in the NodePort range (30000-32767)
