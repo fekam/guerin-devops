@@ -9,9 +9,9 @@
     - name: Copy dev2 directory to the remote machine
       copy:
         src: ../dev2  
-        dest: "{{ maven_project_dir }}"
+        dest: /home/ubuntu
         mode: '0755'
-      delegate_to: master 
+   
 
     - name: Navigate to docker directory and run run.sh
       shell: |
