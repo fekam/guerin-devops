@@ -39,7 +39,7 @@ pipeline {
                 script {
                     sh '''
                         cd dev2  
-                        ansible all -i $INVENTORY_FILE setup_and_test.yml --limit master
+                        ansible-playbook -i $INVENTORY_FILE setup_and_test.yml --limit master
                     '''
                 }
             }
@@ -53,7 +53,7 @@ pipeline {
                 script {
                     sh '''
                         cd dev2  
-                        ansible all -i $INVENTORY_FILE setup_and_shutdown.yml --limit master
+                        ansible-playbook -i $INVENTORY_FILE setup_and_shutdown.yml --limit master
                     '''
                 }
             }
