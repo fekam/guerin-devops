@@ -3,14 +3,21 @@
   hosts: master  
   become: true
   vars:
-    maven_project_dir: "."  
+    maven_project_dir: "/home/ubuntu/dev2"  
+
   tasks:
+    - name: Copy dev2 directory to the remote machine
+      copy:
+        src: ./dev2  
+        dest: "{{ maven_project_dir }}"
+        mode: '0755'
+      delegate_to: localhost  
 
     - name: Navigate to docker directory and run run.sh
       shell: |
-        pwd && ls -l  && ./run.sh
+        cd docker && ./run.sh
       args:
-        chdir: "{{ maven_project_dir }}"  
+        chdir: "{{ maven_project_dir }}"
       register: docker_run_output
       ignore_errors: yes
 
