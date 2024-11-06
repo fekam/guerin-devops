@@ -8,7 +8,7 @@
   tasks:
     - name: Copy dev2 directory to the remote machine
       copy:
-        src: ./dev2  
+        src: ../dev2  
         dest: "{{ maven_project_dir }}"
         mode: '0755'
       delegate_to: localhost  
