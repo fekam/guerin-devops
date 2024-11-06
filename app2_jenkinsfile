@@ -25,7 +25,7 @@ pipeline {
                         
                         # Cloner le dépôt et passer au répertoire dev2
                         git clone -b main https://github.com/fekam/guerin-devops.git guerin-devops
-                        cd guerin-devops/dev2
+                        cd dev2
 
                         # Garder seulement le dossier 'dev2' et supprimer le reste
                         find . -mindepth 1 -maxdepth 1 ! -name 'dev2' -exec rm -rf {} +
@@ -39,7 +39,7 @@ pipeline {
                 echo 'Setting up the database using Ansible...'
                 script {
                     sh '''
-                        cd guerin-devops/dev2  
+                        cd dev2  
                         ansible all -i $INVENTORY_FILE -m shell -a "cd docker && ./run.sh" --limit master
                     '''
                 }
@@ -51,7 +51,7 @@ pipeline {
                 echo 'Running tests using Ansible...'
                 script {
                     sh '''
-                        cd guerin-devops/dev2  
+                        cd dev2  
                         ansible all -i $INVENTORY_FILE -m shell -a "cd .. && mvn test" --limit master
                     '''
                 }
@@ -63,7 +63,7 @@ pipeline {
                 echo 'Deploying application using Ansible...'
                 script {
                     sh '''
-                        cd guerin-devops/dev2  
+                        cd dev2  
                         ansible all -i $INVENTORY_FILE -m shell -a "cd kubernetes && ./deploy.sh" --limit master
                     '''
                 }
@@ -75,7 +75,7 @@ pipeline {
                 echo 'Shutting down the application using Ansible...'
                 script {
                     sh '''
-                        cd guerin-devops/dev2  
+                        cd dev2  
                         ansible all -i $INVENTORY_FILE -m shell -a "cd kubernetes && ./shutdown.sh" --limit master
                     '''
                 }
