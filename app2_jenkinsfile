@@ -27,8 +27,7 @@ pipeline {
                         git clone -b main https://github.com/fekam/guerin-devops.git guerin-devops
                         cd dev2
 
-                        # Garder seulement le dossier 'dev2' et supprimer le reste
-                        find . -mindepth 1 -maxdepth 1 ! -name 'dev2' -exec rm -rf {} +
+
                     '''
                 }
             }
