@@ -1,71 +1,84 @@
 pipeline {
     agent any
-    
+
+    environment {
+        INVENTORY_FILE = "inventory"
+    }
+
     stages {
         stage('Cloner le dépôt ou mettre à jour') {
             steps {
                 script {
                     sh '''
-                        # Check if the guerin-devops directory exists
+                        # Vérifier si le dossier guerin-devops existe
                         if [ -d "guerin-devops" ]; then
                             timestamp=$(date +%Y%m%d%H%M%S)
-                            # Backup the current folder
+                            # Sauvegarde du dossier actuel
                             mv guerin-devops guerin-devops-backup-$timestamp
 
-                            # Limit to 2 backups by removing the oldest ones
+                            # Limiter le nombre de sauvegardes à 2
                             backup_count=$(ls -dt guerin-devops-backup-* 2>/dev/null | wc -l)
                             if [ $backup_count -gt 2 ]; then
                                 ls -dt guerin-devops-backup-* | tail -n +3 | xargs rm -rf
                             fi
                         fi
                         
-                        # Clone the repository
+                        # Cloner le dépôt
                         git clone -b main https://github.com/fekam/guerin-devops.git guerin-devops
 
-                        # Keep only the 'dev2' directory and remove the rest
+                        # Garder seulement le dossier 'dev2' et supprimer le reste
                         cd guerin-devops
                         find . -mindepth 1 -maxdepth 1 ! -name 'dev2' -exec rm -rf {} +
                     '''
                 }
             }
         }
+
         stage('Setup Database') {
             steps {
-                echo 'Setting up the database...'
-                dir('guerin-devops/dev2/docker') {
-                    sh './run.sh'
+                echo 'Setting up the database using Ansible...'
+                script {
+                    sh '''
+                        ansible all -i $INVENTORY_FILE -m shell -a "cd docker && ./run.sh" --limit master
+                    '''
                 }
             }
         }
-        
+
         stage('Run Tests') {
             steps {
-                echo 'Running tests...'
-                dir('guerin-devops/dev2') {
-                    sh 'mvn test'
+                echo 'Running tests using Ansible...'
+                script {
+                    sh '''
+                        ansible all -i $INVENTORY_FILE -m shell -a "cd .. && mvn test" --limit master
+                    '''
                 }
             }
         }
-        
+
         stage('Deploy Application') {
             steps {
-                echo 'Deploying application...'
-                dir('guerin-devops/dev2/kubernetes') {
-                    sh './deploy.sh'
+                echo 'Deploying application using Ansible...'
+                script {
+                    sh '''
+                        ansible all -i $INVENTORY_FILE -m shell -a "cd kubernetes && ./deploy.sh" --limit master
+                    '''
                 }
             }
         }
-        
+
         stage('Shutdown Application') {
             steps {
-                echo 'Shutting down the application...'
-                dir('guerin-devops/dev2/kubernetes') {
-                    sh './shutdown.sh'
+                echo 'Shutting down the application using Ansible...'
+                script {
+                    sh '''
+                        ansible all -i $INVENTORY_FILE -m shell -a "cd kubernetes && ./shutdown.sh" --limit master
+                    '''
                 }
             }
         }
     }
-    
+
     post {
         always {
             echo 'Pipeline completed.'

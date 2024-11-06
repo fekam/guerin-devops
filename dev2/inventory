@@ -1,0 +1,16 @@
+[master]
+master ansible_host=35.182.220.189
+
+[workers]
+worker1 ansible_host=99.79.51.245
+worker2 ansible_host=35.183.87.11
+#worker3 ansible_host=192.168.122.153
+#worker4 ansible_host=192.168.122.154
+#worker5 ansible_host=192.168.122.155
+
+
+[all:vars]
+ansible_python_interpreter=/usr/bin/python3
+ansible_ssh_extra_args='-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null'
+ansible_ssh_private_key_file=/var/lib/jenkins/.ssh/mater.pem
+ansible_user=ubuntu
