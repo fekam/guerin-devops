@@ -11,7 +11,7 @@
         src: ../dev2  
         dest: "{{ maven_project_dir }}"
         mode: '0755'
-      delegate_to: localhost  
+      delegate_to: master 
 
     - name: Navigate to docker directory and run run.sh
       shell: |
