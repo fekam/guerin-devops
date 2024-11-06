@@ -20,7 +20,7 @@ pipeline {
                         fi
                         
                         # Clone the repository
-                        git clone -b main https://github.com/fsdg/gusdfc-devops.git guerin-devops
+                        git clone -b main https://github.com/fekam/guerin-devops.git guerin-devops
 
                         # Keep only the 'dev2' directory and remove the rest
                         cd guerin-devops
