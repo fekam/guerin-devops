@@ -1,20 +1,20 @@
 apiVersion: apps/v1beta2
 kind: Deployment
 metadata:
-  name: antarezdb-deployment
+  name: guerindb-deployment
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: antarezdb
+      app: guerindb
   template:
     metadata:
       labels:
-        app: antarezdb
+        app: guerindb
     spec:
       containers:
-      - name: antarezdb
-        image: marcelomata/antarezdb:0.0.1
+      - name: guerindb
+        image: fekam/guerindb:0.0.1
         ports:
         - name: http
           containerPort: 3306
