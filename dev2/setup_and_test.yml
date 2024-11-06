@@ -1,7 +1,9 @@
 ---
 - name: Setup and Test Maven Project
   hosts: master  
-  become: true  
+  become: true
+  vars:
+    maven_project_dir: "."  
   tasks:
 
     - name: Navigate to docker directory and run run.sh
