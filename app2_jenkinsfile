@@ -1,0 +1,75 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage('Cloner le dépôt ou mettre à jour') {
+            steps {
+                script {
+                    sh '''
+                        # Check if the guerin-devops directory exists
+                        if [ -d "guerin-devops" ]; then
+                            timestamp=$(date +%Y%m%d%H%M%S)
+                            # Backup the current folder
+                            mv guerin-devops guerin-devops-backup-$timestamp
+
+                            # Limit to 2 backups by removing the oldest ones
+                            backup_count=$(ls -dt guerin-devops-backup-* 2>/dev/null | wc -l)
+                            if [ $backup_count -gt 2 ]; then
+                                ls -dt guerin-devops-backup-* | tail -n +3 | xargs rm -rf
+                            fi
+                        fi
+                        
+                        # Clone the repository
+                        git clone -b main https://github.com/fsdg/gusdfc-devops.git guerin-devops
+
+                        # Keep only the 'dev2' directory and remove the rest
+                        cd guerin-devops
+                        find . -mindepth 1 -maxdepth 1 ! -name 'dev2' -exec rm -rf {} +
+                    '''
+                }
+            }
+        }
+        stage('Setup Database') {
+            steps {
+                echo 'Setting up the database...'
+                dir('guerin-devops/dev2/docker') {
+                    sh './run.sh'
+                }
+            }
+        }
+        
+        stage('Run Tests') {
+            steps {
+                echo 'Running tests...'
+                dir('guerin-devops/dev2') {
+                    sh 'mvn test'
+                }
+            }
+        }
+        
+        stage('Deploy Application') {
+            steps {
+                echo 'Deploying application...'
+                dir('guerin-devops/dev2/kubernetes') {
+                    sh './deploy.sh'
+                }
+            }
+        }
+        
+        stage('Shutdown Application') {
+            steps {
+                echo 'Shutting down the application...'
+                dir('guerin-devops/dev2/kubernetes') {
+                    sh './shutdown.sh'
+                }
+            }
+        }
+    }
+    
+    post {
+        always {
+            echo 'Pipeline completed.'
+            cleanWs()
+        }
+    }
+}
