@@ -39,23 +39,13 @@ pipeline {
                 script {
                     sh '''
                         cd dev2  
-                        ansible all -i $INVENTORY_FILE -m shell -a "cd docker && ./run.sh" --limit master
+                        ansible all -i $INVENTORY_FILE setup_and_test.yml --limit master
                     '''
                 }
             }
         }
 
-        stage('Run Tests') {
-            steps {
-                echo 'Running tests using Ansible...'
-                script {
-                    sh '''
-                        cd dev2  
-                        ansible all -i $INVENTORY_FILE -m shell -a "cd .. && mvn test" --limit master
-                    '''
-                }
-            }
-        }
+
 
         stage('Deploy Application') {
             steps {
@@ -63,23 +53,13 @@ pipeline {
                 script {
                     sh '''
                         cd dev2  
-                        ansible all -i $INVENTORY_FILE -m shell -a "cd kubernetes && ./deploy.sh" --limit master
+                        ansible all -i $INVENTORY_FILE setup_and_shutdown.yml --limit master
                     '''
                 }
             }
         }
 
-        stage('Shutdown Application') {
-            steps {
-                echo 'Shutting down the application using Ansible...'
-                script {
-                    sh '''
-                        cd dev2  
-                        ansible all -i $INVENTORY_FILE -m shell -a "cd kubernetes && ./shutdown.sh" --limit master
-                    '''
-                }
-            }
-        }
+
     }
 
 }
