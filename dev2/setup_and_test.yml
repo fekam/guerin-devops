@@ -11,7 +11,14 @@
         src: ../dev2  
         dest: /home/ubuntu
         mode: '0755'
-   
+
+    - name: Ensure Docker is installed
+      apt:
+        name: docker.io
+        state: present
+        update_cache: yes
+      when: ansible_facts['packages']['docker.io'] is not defined
+  
 
     - name: Navigate to docker directory and run run.sh
       shell: |
