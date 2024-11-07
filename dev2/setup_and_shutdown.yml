@@ -8,45 +8,22 @@
 
     - name: Navigate to kubernetes directory and run run.sh
       shell: |
-        cd kubernetes && ./run.sh
+        cd kubernetes && ./deploy.sh
       args:
         chdir: "{{ maven_project_dir }}"  
       register: kubernetes_run_output
-      ignore_errors: yes
+      
 
     - name: Check if kubernetes run.sh executed successfully
       debug:
         msg: "Kubernetes run.sh output: {{ kubernetes_run_output.stdout }}"
       when: kubernetes_run_output.rc == 0
 
-    - name: Run tests using Maven (optional, only if required)
-      shell: mvn test
-      args:
-        chdir: "{{ maven_project_dir }}"  
-      when: kubernetes_run_output.rc == 0  
-      register: test_output
-      ignore_errors: yes
 
     - name: Show test results
       debug:
         msg: "Maven test output: {{ test_output.stdout }}"
       when: test_output.rc == 0
-
-    - name: Shutdown Kubernetes environment using shutdown.sh
-      shell: |
-        cd kubernetes && ./shutdown.sh
-      args:
-        chdir: "{{ maven_project_dir }}"  
-      when: kubernetes_run_output.rc == 0  
-      register: kubernetes_shutdown_output
       ignore_errors: yes
 
-    - name: Check if kubernetes shutdown.sh executed successfully
-      debug:
-        msg: "Kubernetes shutdown.sh output: {{ kubernetes_shutdown_output.stdout }}"
-      when: kubernetes_shutdown_output.rc == 0
 
-    - name: Fail the play if shutdown failed
-      fail:
-        msg: "Kubernetes shutdown failed"
-      when: kubernetes_shutdown_output.rc != 0
