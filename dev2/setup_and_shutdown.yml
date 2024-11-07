@@ -2,7 +2,8 @@
 - name: Setup and Shutdown Maven Project
   hosts: master  
   become: true  
-  maven_project_dir: "/home/ubuntu/dev2" 
+  vars:
+    maven_project_dir: "/home/ubuntu/dev2"  
   tasks:
 
     - name: Navigate to kubernetes directory and run run.sh
