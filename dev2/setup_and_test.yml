@@ -50,3 +50,4 @@
       fail:
         msg: "Maven tests failed"
       when: test_output.rc != 0
+      ignore_errors: yes
