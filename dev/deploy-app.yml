@@ -1,7 +1,6 @@
 ---
 - name: Deploy application to Kubernetes
   hosts: master
-  become: yes
   tasks:
     
     - name: Copy manifest to master node
