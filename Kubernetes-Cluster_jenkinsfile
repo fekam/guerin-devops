@@ -28,7 +28,7 @@ pipeline {
         stage('Déployer avec Ansible') {
             steps {
                 sh '''
-                    cd guerin-devops/Kubernetes-Cluster && ansible-playbook -i inventory 02-controlplane.yaml
+                    cd guerin-devops/Kubernetes-Cluster && ansible-playbook -i inventory 03-workers.yaml
                 '''
             }
         }
