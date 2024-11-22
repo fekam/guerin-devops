@@ -2,25 +2,34 @@
 - name: Deploy application to Kubernetes
   hosts: master
   tasks:
-    
-    - name: Copy manifest to master node
+    - name: Copy app manifest to master node
       copy:
-        src: ./
+        src: ./app-01.yml
         dest: /home/ubuntu/app-01.yml
         mode: '0644'
 
-    - name: create namespace
+    - name: Copy namespace manifest to master node
+      copy:
+        src: ./namespace.yml
+        dest: /home/ubuntu/namespace.yml
+        mode: '0644'
+
+    - name: Create namespace
       shell: kubectl apply -f /home/ubuntu/namespace.yml
       args:
         chdir: /home/ubuntu
-      register: apply_output
+      register: namespace_output
 
     - name: Apply Kubernetes manifest using kubectl
       shell: kubectl apply -f /home/ubuntu/app-01.yml
       args:
         chdir: /home/ubuntu
-      register: apply_output
+      register: app_output
 
-    - name: Show kubectl apply output
+    - name: Show namespace apply output
       debug:
-        msg: "{{ apply_output.stdout }}"
+        msg: "{{ namespace_output.stdout }}"
+
+    - name: Show app apply output
+      debug:
+        msg: "{{ app_output.stdout }}"
