@@ -1,0 +1,6 @@
+# ansible/playbook.yml
+- hosts: master
+  gather_facts: no
+  tasks:
+    - name: Execute the deployment playbook
+      include_tasks: deploy.yml

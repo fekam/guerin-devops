@@ -1,0 +1,83 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_REGISTRY = 'fekam'
+        IMAGE_NAME = 'dev1'
+        KUBE_CONFIG = '~/.kube/config' // Ensure this path is correct for your environment
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                script {
+                    sh '''
+                        # Check if the guerin-devops directory exists
+                        if [ -d "guerin-devops" ]; then
+                            timestamp=$(date +%Y%m%d%H%M%S)
+                            # Create a backup of the current folder
+                            mv guerin-devops guerin-devops-backup-$timestamp
+
+                            # Limit the number of backups to 2
+                            backup_count=$(ls -dt guerin-devops-backup-* | wc -l)
+                            if [ $backup_count -gt 2 ]; then
+                                # Remove the oldest backups
+                                ls -dt guerin-devops-backup-* | tail -n +3 | xargs rm -rf
+                            fi
+                        fi
+                        
+                        # Clone the repository after creating a backup
+                        git clone -b main https://github.com/fekam/guerin-devops.git
+                    '''
+                }
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    // Ensure the correct path to the app folder
+                    sh "docker build -t ${DOCKER_REGISTRY}/${IMAGE_NAME}:latest ./guerin-devops/app"
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                script {
+                    // Push Docker image to Docker registry
+                    sh "docker push ${DOCKER_REGISTRY}/${IMAGE_NAME}:latest"
+                }
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                script {
+                    // Use Ansible playbook for Kubernetes deployment
+                    sh '''
+                        ansible-playbook -i ./guerin-devops/inventory ./guerin-devops/ops/playbook.yml
+                    '''
+                }
+            }
+        }
+
+        stage('Verify Deployment') {
+            steps {
+                script {
+                    // Verify the Kubernetes deployment
+                    sh "ansible -i ./guerin-devops/inventory master -m shell -a "kubectl get pods -n dev1""
+                }
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "Deployment Successful!"
+        }
+        failure {
+            echo "Deployment Failed!"
+        }
+    }
+}

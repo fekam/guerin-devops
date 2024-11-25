@@ -1,0 +1,34 @@
+# ansible/deploy.yml
+- name: Deploy Flask app to Kubernetes
+  hosts: master
+  gather_facts: no
+  tasks:
+    - name: Build the Docker image
+      docker_image:
+        name: flask-k8s-app
+        build:
+          path: ./app
+        state: present
+
+    - name: Push Docker image to registry
+      docker_image:
+        name: flask-k8s-app
+        repository: your_docker_registry/flask-k8s-app
+        tag: latest
+        source: build
+        state: present
+
+    - name: Deploy the app to Kubernetes
+      kubernetes.core.k8s:
+        kubeconfig: "~/.kube/config"
+        definition: "{{ lookup('file', './kubernetes/deployment.yaml') }}"
+    
+    - name: Expose the app via Kubernetes service
+      kubernetes.core.k8s:
+        kubeconfig: "~/.kube/config"
+        definition: "{{ lookup('file', './kubernetes/service.yaml') }}"
+
+    - name: Create ingress for the app
+      kubernetes.core.k8s:
+        kubeconfig: "~/.kube/config"
+        definition: "{{ lookup('file', './kubernetes/ingress.yaml') }}"
