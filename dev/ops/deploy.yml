@@ -1,3 +1,4 @@
+---
 - name: Deploy Flask app to Kubernetes
   hosts: master
   gather_facts: no
@@ -15,7 +16,7 @@
         name: flask-k8s-app
         repository: your_docker_registry/flask-k8s-app
         tag: latest
-        push: yes
+        push: true
         state: present
 
     - name: Deploy the app to Kubernetes
