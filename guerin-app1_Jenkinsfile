@@ -51,13 +51,13 @@ pipeline {
                 }
             }
         }
-        
+
         stage('Deploy to Kubernetes') {
             steps {
                 script {
                     // Use Ansible playbook for Kubernetes deployment
                     sh '''
-                        ansible-playbook -i ./guerin-devops/inventory ./guerin-devops/dev/ops/playbook.yml
+                        ansible-playbook -i ./guerin-devops/dev/inventory ./guerin-devops/dev/ops/playbook.yml
                     '''
                 }
             }
