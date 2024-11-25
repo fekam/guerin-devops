@@ -46,7 +46,7 @@ pipeline {
             steps {
                 script {
                     // Push Docker image to Docker registry
-                    sh "docker push ${DOCKER_REGISTRY}/${IMAGE_NAME}:latest"
+                    sh "sudo docker push ${DOCKER_REGISTRY}/${IMAGE_NAME}:latest"
                 }
             }
         }
