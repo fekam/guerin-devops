@@ -1,5 +1,5 @@
 ---
-  name: Deploy Flask app to Kubernetes
+ - name: Deploy Flask app to Kubernetes
   hosts: master
   gather_facts: no
 
