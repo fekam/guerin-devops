@@ -8,6 +8,12 @@
         dest: /home/ubuntu/app-01.yml
         mode: '0644'
 
+    - name: Copy app service to master node
+      copy:
+        src: ./app-01.yml
+        dest: /home/ubuntu/app-01-service.yml
+        mode: '0644'
+
     - name: Copy namespace manifest to master node
       copy:
         src: ./namespace.yml
@@ -25,6 +31,13 @@
       args:
         chdir: /home/ubuntu
       register: app_output
+
+    - name: Apply Kubernetes app-01-service.yml using kubectl
+      shell: kubectl apply -f /home/ubuntu/app-01-service.yml
+      args:
+        chdir: /home/ubuntu
+      register: app_output
+
 
     - name: Show namespace apply output
       debug:
