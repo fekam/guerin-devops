@@ -61,13 +61,19 @@
         chdir: "{{ destination }}"
       register: mysql_database_output
 
-    - name: Apply phpMyAdmin service manifest
+    - name: Apply phpMyAdmin manifest
       shell: kubectl apply -f "{{ destination }}/phpmyadmin.yaml"
       args:
         chdir: "{{ destination }}"
       register: phpmyadmin_service_output
 
-    - name: Apply phpMyAdmin ingress manifest
+    - name: Apply phpMyAdmin service manifest
+      shell: kubectl apply -f "{{ destination }}/phpmyadmin-service.yaml"
+      args:
+        chdir: "{{ destination }}"
+      register: phpmyadmin-service_service_output
+
+    - name: Apply  ingress manifest
       shell: kubectl apply -f "{{ destination }}/ingress.yaml"
       args:
         chdir: "{{ destination }}"
@@ -85,3 +91,7 @@
     - name: Show ingress service apply output
       debug:
         msg: "{{ ingress_output.stdout }}"
+      
+    - name: Show service_service apply output
+      debug:
+        msg: "{{ phpmyadmin-service_service_output.stdout }}"
