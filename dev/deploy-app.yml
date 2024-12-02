@@ -2,23 +2,15 @@
 - name: Deploy application to Kubernetes
   hosts: master
   vars:
-    destination: /home/ubuntu/app
+    destination: /home/ubuntu
     source: /var/lib/jenkins/workspace/app-01/dev/app
 
   tasks:
 
-    - name: Ensure directories exist and are empty
-      file:
-        path: "{{ item }}"
-        state: directory
-        mode: '0755'
-      with_items:
-        - "{{ destination }}"
-
     - name: Copy files from source to destination
       copy:
-        src: /home/ubuntu
-        dest: "{{ destination }}/"
+        src: "{{ source }}"
+        dest: "{{ destination }}"
         mode: '0644'
 
 
