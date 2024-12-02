@@ -62,7 +62,7 @@
       register: mysql_database_output
 
     - name: Apply phpMyAdmin service manifest
-      shell: kubectl apply -f "{{ destination }}/phpmyadmin-service.yml"
+      shell: kubectl apply -f "{{ destination }}/phpmyadmin.yaml"
       args:
         chdir: "{{ destination }}"
       register: phpmyadmin_service_output
