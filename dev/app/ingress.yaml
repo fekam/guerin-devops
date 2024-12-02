@@ -1,18 +1,29 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: dev1-ingress
+  name: app-ingress
+  namespace: dev1
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-  - host: dev1 # Changez ceci en fonction de votre domaine
+  - host: phpmyadmin.example.com # Utilisez votre domaine pour phpMyAdmin
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: dev1-service
+            name: mysql-service
             port:
-              number: 80
+              number: 30000
+  - host: app01.example.com # Utilisez votre domaine pour l'app-01
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: app-01-service
+            port:
+              number: 30006

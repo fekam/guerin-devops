@@ -67,9 +67,12 @@
         chdir: "{{ destination }}"
       register: phpmyadmin_service_output
 
-    - name: Show MySQL namespace apply output
-      debug:
-        msg: "{{ namespace_output_db.stdout }}"
+    - name: Apply phpMyAdmin service manifest
+      shell: kubectl apply -f "{{ destination }}/ingress.yaml"
+      args:
+        chdir: "{{ destination }}"
+      register: ingress_output
+
 
     - name: Show MySQL database apply output
       debug:
