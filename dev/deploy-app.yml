@@ -71,7 +71,8 @@
       shell: kubectl apply -f "{{ destination }}/phpmyadmin-service.yaml"
       args:
         chdir: "{{ destination }}"
-      register: phpmyadmin-test-service_output
+      register: phpmyadmin_test_service_output
+
 
     - name: Apply  ingress manifest
       shell: kubectl apply -f "{{ destination }}/ingress.yaml"
@@ -94,4 +95,4 @@
       
     - name: Show service_service apply output
       debug:
-        msg: "{{ phpmyadmin-test-service_output.stdout }}"
+        msg: "{{ phpmyadmin_test_service_output.stdout }}"
