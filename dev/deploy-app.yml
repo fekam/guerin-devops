@@ -1,6 +1,10 @@
 ---
 - name: Deploy application to Kubernetes
   hosts: master
+  vars:
+    destination: /home/ubuntu/app
+    source: /var/lib/jenkins/workspace/app-01/dev/app
+
   tasks:
 
     - name: Ensure directories exist and are empty
@@ -9,37 +13,31 @@
         state: directory
         mode: '0755'
       with_items:
-        - /home/ubuntu/app
-        - /home/ubuntu/ops
+        - "{{ destination }}"
 
-    - name: Copy files from ../ops to /home/ubuntu/ops
+    - name: Copy files from source to destination
       copy:
-        src: ../ops/
-        dest: /home/ubuntu/ops/
+        src: "{{ source }}"
+        dest: "{{ destination }}/"
         mode: '0644'
 
-    - name: Copy files from ../app to /home/ubuntu/app
-      copy:
-        src: ../app/
-        dest: /home/ubuntu/app/
-        mode: '0644'
 
     - name: Create app1 namespace
-      shell: kubectl apply -f /home/ubuntu/ops/namespace.yml
+      shell: kubectl apply -f "{{ destination }}/namespace.yml"
       args:
-        chdir: /home/ubuntu/ops
+        chdir: "{{ destination }}"
       register: namespace_output_app
 
     - name: Apply app-01 Kubernetes manifest
-      shell: kubectl apply -f /home/ubuntu/ops/app-01.yml
+      shell: kubectl apply -f "{{ destination }}/app-01.yml"
       args:
-        chdir: /home/ubuntu/ops
+        chdir: "{{ destination }}"
       register: app01_output
 
     - name: Apply app-01-service Kubernetes manifest
-      shell: kubectl apply -f /home/ubuntu/ops/app-01-service.yml
+      shell: kubectl apply -f "{{ destination }}/app-01-service.yml"
       args:
-        chdir: /home/ubuntu/ops
+        chdir: "{{ destination }}"
       register: app01_service_output
 
     - name: Show app1 namespace apply output
@@ -50,28 +48,23 @@
       debug:
         msg: "{{ app01_output.stdout }}"
 
-    - name: Create mysql-database namespace
-      shell: kubectl apply -f /home/ubuntu/app/namespace.yml
-      args:
-        chdir: /home/ubuntu/app
-      register: namespace_output_db
 
     - name: Apply MySQL secret manifest
-      shell: kubectl apply -f /home/ubuntu/app/mysql-secret.yaml
+      shell: kubectl apply -f "{{ destination }}/mysql-secret.yaml"
       args:
-        chdir: /home/ubuntu/app
+        chdir: "{{ destination }}"
       register: mysql_secret_output
 
     - name: Apply MySQL database manifest
-      shell: kubectl apply -f /home/ubuntu/app/mysql-database.yml
+      shell: kubectl apply -f "{{ destination }}/mysql-database.yml"
       args:
-        chdir: /home/ubuntu/app
+        chdir: "{{ destination }}"
       register: mysql_database_output
 
     - name: Apply phpMyAdmin service manifest
-      shell: kubectl apply -f /home/ubuntu/app/phpmyadmin-service.yml
+      shell: kubectl apply -f "{{ destination }}/phpmyadmin-service.yml"
       args:
-        chdir: /home/ubuntu/app
+        chdir: "{{ destination }}"
       register: phpmyadmin_service_output
 
     - name: Show MySQL namespace apply output
