@@ -7,7 +7,7 @@ metadata:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-  - host: phpmyadmin.example.com # Utilisez votre domaine pour phpMyAdmin
+  - host: phpmyadmin.local  
     http:
       paths:
       - path: /
@@ -17,7 +17,7 @@ spec:
             name: mysql-service
             port:
               number: 30000
-  - host: app01.example.com # Utilisez votre domaine pour l'app-01
+  - host: app01.local  
     http:
       paths:
       - path: /
