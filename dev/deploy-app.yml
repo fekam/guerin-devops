@@ -2,7 +2,7 @@
 - name: Deploy application to Kubernetes
   hosts: master
   vars:
-    destination: /home/ubuntu
+    destination: /home/ubuntu/app
     source: /var/lib/jenkins/workspace/app-01/dev/app
 
   tasks:
@@ -10,7 +10,7 @@
     - name: Copy files from source to destination
       copy:
         src: "{{ source }}"
-        dest: "{{ destination }}"
+        dest: /home/ubuntu
         mode: '0644'
 
 
