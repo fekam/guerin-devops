@@ -1,0 +1,51 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: phpmyadmin-deployment
+  namespace: mysql-database
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: phpmyadmin
+  template:
+    metadata:
+      labels:
+        app: phpmyadmin
+    spec:
+      containers:
+      - name: phpmyadmin
+        image: phpmyadmin/phpmyadmin
+
+        env:
+            - name: PMA_HOST
+              value: mysql-service
+
+            - name: PMA_PORT
+              value: "3306"
+
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: mysql-root-password #the password on mysql-secret.yaml and is base64 decoded
+        ports:
+        - name: phpmyadmin
+          containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: phpmyadmin-service
+  namespace: mysql-database
+spec:
+  selector:
+    app: phpmyadmin
+  type: NodePort
+  ports:
+    - name: phpmyadmin
+      port: 80
+      protocol: TCP
+      targetPort: 80
+      nodePort: 30000

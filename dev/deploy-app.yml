@@ -2,47 +2,86 @@
 - name: Deploy application to Kubernetes
   hosts: master
   tasks:
-    - name: Copy app manifest to master node
+
+    - name: Ensure directories exist and are empty
+      file:
+        path: "{{ item }}"
+        state: directory
+        mode: '0755'
+      with_items:
+        - /home/ubuntu/app
+        - /home/ubuntu/ops
+
+    - name: Copy files from ../ops to /home/ubuntu/ops
       copy:
-        src: ./app-01.yml
-        dest: /home/ubuntu/app-01.yml
+        src: ../ops/
+        dest: /home/ubuntu/ops/
         mode: '0644'
 
-    - name: Copy app service to master node
+    - name: Copy files from ../app to /home/ubuntu/app
       copy:
-        src: ./app-01.yml
-        dest: /home/ubuntu/app-01-service.yml
+        src: ../app/
+        dest: /home/ubuntu/app/
         mode: '0644'
 
-    - name: Copy namespace manifest to master node
-      copy:
-        src: ./namespace.yml
-        dest: /home/ubuntu/namespace.yml
-        mode: '0644'
-
-    - name: Create namespace
-      shell: kubectl apply -f /home/ubuntu/namespace.yml
+    - name: Create app1 namespace
+      shell: kubectl apply -f /home/ubuntu/ops/namespace.yml
       args:
-        chdir: /home/ubuntu
-      register: namespace_output
+        chdir: /home/ubuntu/ops
+      register: namespace_output_app
 
-    - name: Apply Kubernetes manifest using kubectl
-      shell: kubectl apply -f /home/ubuntu/app-01.yml
+    - name: Apply app-01 Kubernetes manifest
+      shell: kubectl apply -f /home/ubuntu/ops/app-01.yml
       args:
-        chdir: /home/ubuntu
-      register: app_output
+        chdir: /home/ubuntu/ops
+      register: app01_output
 
-    - name: Apply Kubernetes app-01-service.yml using kubectl
-      shell: kubectl apply -f /home/ubuntu/app-01-service.yml
+    - name: Apply app-01-service Kubernetes manifest
+      shell: kubectl apply -f /home/ubuntu/ops/app-01-service.yml
       args:
-        chdir: /home/ubuntu
-      register: app_output
+        chdir: /home/ubuntu/ops
+      register: app01_service_output
 
-
-    - name: Show namespace apply output
+    - name: Show app1 namespace apply output
       debug:
-        msg: "{{ namespace_output.stdout }}"
+        msg: "{{ namespace_output_app.stdout }}"
 
-    - name: Show app apply output
+    - name: Show app-01 apply output
       debug:
-        msg: "{{ app_output.stdout }}"
+        msg: "{{ app01_output.stdout }}"
+
+    - name: Create mysql-database namespace
+      shell: kubectl apply -f /home/ubuntu/app/namespace.yml
+      args:
+        chdir: /home/ubuntu/app
+      register: namespace_output_db
+
+    - name: Apply MySQL secret manifest
+      shell: kubectl apply -f /home/ubuntu/app/mysql-secret.yaml
+      args:
+        chdir: /home/ubuntu/app
+      register: mysql_secret_output
+
+    - name: Apply MySQL database manifest
+      shell: kubectl apply -f /home/ubuntu/app/mysql-database.yml
+      args:
+        chdir: /home/ubuntu/app
+      register: mysql_database_output
+
+    - name: Apply phpMyAdmin service manifest
+      shell: kubectl apply -f /home/ubuntu/app/phpmyadmin-service.yml
+      args:
+        chdir: /home/ubuntu/app
+      register: phpmyadmin_service_output
+
+    - name: Show MySQL namespace apply output
+      debug:
+        msg: "{{ namespace_output_db.stdout }}"
+
+    - name: Show MySQL database apply output
+      debug:
+        msg: "{{ mysql_database_output.stdout }}"
+
+    - name: Show phpMyAdmin service apply output
+      debug:
+        msg: "{{ phpmyadmin_service_output.stdout }}"

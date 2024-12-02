@@ -1,0 +1,65 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-deployment
+  namespace: mysql-database
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: mysql
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      containers:
+        - image: centos/mysql-57-centos7
+          name: mysql
+
+          env:
+            - name: MYSQL_DATABASE
+              value: myDB # Here is the database will be created
+
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: mysql-root-password
+            - name: MYSQL_USER
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: mysql-user
+            # - name: MYSQL_DATABASE
+            #   valueFrom:
+            #     secretKeyRef:
+            #       name: mysql-secret
+            #       key: mysql-database
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secret
+                  key: mysql-root-password
+          ports:
+            - name: mysql-database
+              containerPort: 3306
+
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-service
+  namespace: mysql-database
+spec:
+  ports:
+    - name: mysql-database
+      protocol: TCP
+      port: 3306
+      nodePort: 30036
+      targetPort: 3306
+  type: NodePort
+  selector:
+    app: mysql
