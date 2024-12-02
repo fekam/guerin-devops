@@ -2,7 +2,7 @@
 - name: Deploy application to Kubernetes
   hosts: master
   vars:
-    destination: /home/ubuntu/app
+    destination: /home/ubuntu
     source: /var/lib/jenkins/workspace/app-01/dev/app
 
   tasks:
