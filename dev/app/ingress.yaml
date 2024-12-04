@@ -2,22 +2,22 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: ingress-nginx
-  namespace: dev1
+  namespace: nginx-ingress
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
-  - host: phpmyadmin.local  
+  - host: phpmyadmin.local
     http:
       paths:
       - path: /
         pathType: Prefix
         backend:
           service:
-            name: mysql-service
+            name:  phpmyadmin-service
             port:
               number: 30000
-  - host: app01.local  
+  - host: app01.local
     http:
       paths:
       - path: /

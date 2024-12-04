@@ -16,4 +16,4 @@ spec:
       - name: guerinApp
         image: fekam/guerinApp:latest
         ports:
-        - containerPort: 8080
+        - containerPort: 8081
